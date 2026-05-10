@@ -1,5 +1,6 @@
 package com.example.raizes_do_nordeste.model;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import jakarta.persistence.Column;
@@ -21,7 +22,7 @@ public class Produto {
     @Column (nullable = false)
     private String descricao;
     @Column (nullable = false)
-    private Double precoBase;
+    private BigDecimal precoBase;
     @Column (nullable = false)
     private Boolean disponivel;
 
@@ -35,7 +36,7 @@ public class Produto {
     public Produto() {
     }
 
-    public Produto(Long id, String nome, String descricao, Double precoBase, Boolean disponivel,
+    public Produto(Long id, String nome, String descricao, BigDecimal precoBase, Boolean disponivel,
             List<ItemPedido> itensPedido, List<Estoque> estoques) {
         this.id = id;
         this.nome = nome;
@@ -67,11 +68,11 @@ public class Produto {
         this.descricao = descricao;
     }
 
-    public Double getPrecoBase() {
+    public BigDecimal getPrecoBase() {
         return precoBase;
     }
 
-    public void setPrecoBase(Double precoBase) {
+    public void setPrecoBase(BigDecimal precoBase) {
         this.precoBase = precoBase;
     }
 
