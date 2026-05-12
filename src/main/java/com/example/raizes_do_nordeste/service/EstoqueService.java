@@ -19,5 +19,8 @@ public class EstoqueService {
         return estoqueRepository.findAll();
     }
 
-    
+    public Estoque criarEstoque(Estoque estoque) {
+        return estoqueRepository.save(estoque);
+    }
 }
+ 

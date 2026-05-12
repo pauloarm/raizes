@@ -1,12 +1,16 @@
 package com.example.raizes_do_nordeste.service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.Collections;
 
 import org.springframework.stereotype.Service;
 
+import com.example.raizes_do_nordeste.dto.UsuarioRequestDTO;
+import com.example.raizes_do_nordeste.dto.UsuarioResponseDTO;
+import com.example.raizes_do_nordeste.enums.Perfil;
 import com.example.raizes_do_nordeste.model.Usuario;
 import com.example.raizes_do_nordeste.repository.UsuarioRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class UsuarioService {
@@ -16,33 +20,26 @@ public class UsuarioService {
         this.usuarioRepository = usuarioRepository;
     }
 
-    public List<Usuario> listarUsuarios() {
-        return usuarioRepository.findAll();
-    }
-    
-    public Optional<Usuario> buscarUsuarioPorId(Long id) {
-        return usuarioRepository.findById(id);
-    }
+    @Transactional
+    public UsuarioResponseDTO cadastrarUsuario(UsuarioRequestDTO usuarioRequestDTO) {
+        Usuario usuario = new Usuario();
+        usuario.setNome(usuarioRequestDTO.nome());
+        usuario.setEmail(usuarioRequestDTO.email());
+        usuario.setCpf(usuarioRequestDTO.cpf());
+        usuario.setConsentimentoLgpd(usuarioRequestDTO.consentimentoLgpd());
 
-    public Usuario criarUsuario(Usuario usuario) {
-        return usuarioRepository.save(usuario);
-    }
+        usuario.setSenha(usuarioRequestDTO.senha());
+        usuario.setPerfil(Perfil.CLIENTE);
 
-    public Usuario atualizarUsuario(Long id, Usuario usuarioAtualizado) {
-        return usuarioRepository.findById(id)
-                .map(usuario -> {
-                    usuario.setNome(usuarioAtualizado.getNome());
-                    usuario.setEmail(usuarioAtualizado.getEmail());
-                    usuario.setSenha(usuarioAtualizado.getSenha());
-                    usuario.setCpf(usuarioAtualizado.getCpf());
-                    usuario.setConsentimentoLgpd(usuarioAtualizado.getConsentimentoLgpd());
-                    usuario.setPerfil(usuarioAtualizado.getPerfil());
-                    return usuarioRepository.save(usuario);
-                })
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-    }
+        Usuario usuarioSalvo = usuarioRepository.save(usuario);
 
-    public void deletarUsuario(Long id) {
-        usuarioRepository.deleteById(id);
+        return new UsuarioResponseDTO(
+                usuarioSalvo.getId(),
+                usuarioSalvo.getNome(),
+                usuarioSalvo.getEmail(),
+                Collections.singleton(usuarioSalvo.getPerfil().name()) //
+                
+        );
     }
 }
+
