@@ -1,11 +1,12 @@
 package com.example.raizes_do_nordeste.service;
 
-import java.util.List;
-
 import org.springframework.stereotype.Service;
 
+import com.example.raizes_do_nordeste.dto.UnidadeDTO;
 import com.example.raizes_do_nordeste.model.Unidade;
 import com.example.raizes_do_nordeste.repository.UnidadeRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class UnidadeService {
@@ -15,11 +16,14 @@ public class UnidadeService {
         this.unidadeRepository = unidadeRepository;
     }
 
-    public Unidade criarUnidade(Unidade unidade) {
-        return unidadeRepository.save(unidade);
+    @Transactional
+    public UnidadeDTO criarUnidade(UnidadeDTO unidadeDTO) {
+        Unidade unidade = new Unidade();
+        unidade.setNome(unidadeDTO.nome());
+        unidade.setEndereco(unidadeDTO.endereco());
+        unidade.setPossuiCozinhaCompleta(unidadeDTO.possuiCozinhaCompleta());
+        Unidade unidadeSalva = unidadeRepository.save(unidade);
+        return new UnidadeDTO(unidadeSalva.getId(), unidadeSalva.getNome(), unidadeSalva.getEndereco(), unidadeSalva.getPossuiCozinhaCompleta());
     }
 
-    public List<Unidade> listarUnidades() {
-        return unidadeRepository.findAll();
-    }
 }
