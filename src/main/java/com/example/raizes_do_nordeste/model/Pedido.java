@@ -7,6 +7,7 @@ import java.util.List;
 import com.example.raizes_do_nordeste.enums.CanalPedido;
 import com.example.raizes_do_nordeste.enums.StatusPedido;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -35,7 +36,7 @@ public class Pedido {
     private Unidade unidade;
     @ManyToOne
     private Usuario usuario;
-    @OneToMany (mappedBy = "pedido")
+    @OneToMany (mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemPedido> itens;
     public Pedido() {
     }

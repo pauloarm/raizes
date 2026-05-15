@@ -2,6 +2,7 @@ package com.example.raizes_do_nordeste.model;
 
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,7 +27,7 @@ public class Unidade {
     @OneToMany(mappedBy = "unidade")
     private List<Pedido> pedidos;
 
-    @OneToMany(mappedBy = "unidade")
+    @OneToMany(mappedBy = "unidade", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Estoque> estoques;
 
     public Unidade() {
