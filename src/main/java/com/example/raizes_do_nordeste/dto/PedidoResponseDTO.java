@@ -12,7 +12,7 @@ public record PedidoResponseDTO(
     StatusPedido status,
     BigDecimal total,
     CanalPedido canalPedido,
-    LocalDateTime createdAt,
+    LocalDateTime dataPedido,
     List<ItemPedidoResponseDTO> itens
 ) {
 

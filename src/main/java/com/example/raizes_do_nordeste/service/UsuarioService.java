@@ -22,6 +22,10 @@ public class UsuarioService {
 
     @Transactional
     public UsuarioResponseDTO cadastrarUsuario(UsuarioRequestDTO usuarioRequestDTO) {
+
+        if(usuarioRepository.findByEmail(usuarioRequestDTO.email()).isPresent()){
+            throw new RuntimeException("Este e-mail já esta cadastrado.");
+        }
         Usuario usuario = new Usuario();
         usuario.setNome(usuarioRequestDTO.nome());
         usuario.setEmail(usuarioRequestDTO.email());

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.raizes_do_nordeste.dto.ItemPedidoRequestDTO;
 import com.example.raizes_do_nordeste.dto.PedidoRequestDTO;
+import com.example.raizes_do_nordeste.exception.EstoqueInsuficienteException;
 import com.example.raizes_do_nordeste.model.Estoque;
 import com.example.raizes_do_nordeste.model.ItemPedido;
 import com.example.raizes_do_nordeste.model.Pedido;
@@ -19,6 +20,8 @@ import com.example.raizes_do_nordeste.repository.PedidoRepository;
 import com.example.raizes_do_nordeste.repository.ProdutoRepository;
 import com.example.raizes_do_nordeste.repository.UnidadeRepository;
 import com.example.raizes_do_nordeste.repository.UsuarioRepository;
+import com.example.raizes_do_nordeste.enums.StatusPedido; 
+import com.example.raizes_do_nordeste.enums.CanalPedido;
 
 import jakarta.transaction.Transactional;
 
@@ -43,9 +46,7 @@ public class PedidoService {
 
     @Transactional
     public Pedido criarPedido(PedidoRequestDTO pedidoRequest) {
-        // Lógica para criar um pedido, associar usuário, unidade, produtos e atualizar estoque
-        // Validar dados, calcular valor total, etc.
-        // Salvar o pedido no banco de dados usando pedidoRepository
+        
 
         // Buscar o usuário e a unidade para associar ao pedido
         Usuario cliente = usuarioRepository.findById(pedidoRequest.usuarioId())
@@ -59,7 +60,7 @@ public class PedidoService {
         pedido.setUsuario(cliente);
         pedido.setUnidade(unidade);
         pedido.setCanalPedido(pedidoRequest.canalPedido());
-        pedido.setStatus(pedidoRequest.status());
+        pedido.setStatus(StatusPedido.AGUARDANDO_PAGAMENTO);
         pedido.setDataCriacao(LocalDateTime.now());
         pedido.setItens(new ArrayList<>());
 
@@ -76,7 +77,7 @@ public class PedidoService {
                 .orElseThrow(() -> new RuntimeException("Estoque não encontrado para o produto e unidade"));
 
             if(estoqueLocal.getQuantidade() < itemDto.quantidade()) {
-                throw new RuntimeException("Estoque insuficiente para o produto: " + produto.getNome() + ". Disponível: " + estoqueLocal.getQuantidade());
+                throw new EstoqueInsuficienteException("Não há quantidade suficiente. Quantidade Disponivel: " + estoqueLocal.getQuantidade());
             }
 
             estoqueLocal.setQuantidade((estoqueLocal.getQuantidade() - itemDto.quantidade()));

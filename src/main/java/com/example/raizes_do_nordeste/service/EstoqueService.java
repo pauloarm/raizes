@@ -1,5 +1,8 @@
 package com.example.raizes_do_nordeste.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 
 import com.example.raizes_do_nordeste.dto.EstoqueRequestDTO;
@@ -43,5 +46,16 @@ public class EstoqueService {
             estoqueSalvo.getQuantidade()
         );
     }
+
+    public List<EstoqueResponseDTO> listarTodoEstoque(){
+        return estoqueRepository.findAll().stream()
+                .map(estoque -> new EstoqueResponseDTO(estoque.getId(),
+                                                        estoque.getProduto().getNome(),
+                                                        estoque.getUnidade().getNome(),
+                                                        estoque.getQuantidade()))
+                .collect((Collectors.toList()));
+    }
+
 }
+
  
