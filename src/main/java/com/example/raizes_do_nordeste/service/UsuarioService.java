@@ -2,6 +2,7 @@ package com.example.raizes_do_nordeste.service;
 
 import java.util.Collections;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.raizes_do_nordeste.dto.UsuarioRequestDTO;
@@ -15,9 +16,11 @@ import jakarta.transaction.Transactional;
 @Service
 public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UsuarioService(UsuarioRepository usuarioRepository) {
+    public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional
@@ -32,7 +35,7 @@ public class UsuarioService {
         usuario.setCpf(usuarioRequestDTO.cpf());
         usuario.setConsentimentoLgpd(usuarioRequestDTO.consentimentoLgpd());
 
-        usuario.setSenha(usuarioRequestDTO.senha());
+        usuario.setSenha(passwordEncoder.encode(usuarioRequestDTO.senha()));
         usuario.setPerfil(Perfil.CLIENTE);
 
         Usuario usuarioSalvo = usuarioRepository.save(usuario);
