@@ -3,11 +3,16 @@ package com.example.raizes_do_nordeste.service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
 import com.example.raizes_do_nordeste.dto.ItemPedidoRequestDTO;
+import com.example.raizes_do_nordeste.dto.ItemPedidoResponseDTO;
 import com.example.raizes_do_nordeste.dto.PedidoRequestDTO;
+import com.example.raizes_do_nordeste.dto.PedidoResponseDTO;
 import com.example.raizes_do_nordeste.exception.EstoqueInsuficienteException;
 import com.example.raizes_do_nordeste.model.Estoque;
 import com.example.raizes_do_nordeste.model.ItemPedido;
@@ -21,7 +26,6 @@ import com.example.raizes_do_nordeste.repository.ProdutoRepository;
 import com.example.raizes_do_nordeste.repository.UnidadeRepository;
 import com.example.raizes_do_nordeste.repository.UsuarioRepository;
 import com.example.raizes_do_nordeste.enums.StatusPedido; 
-import com.example.raizes_do_nordeste.enums.CanalPedido;
 
 import jakarta.transaction.Transactional;
 
@@ -99,4 +103,29 @@ public class PedidoService {
         pedido.setValorTotal(valorTotal);
         return pedidoRepository.save(pedido);
     }
+
+    public List<PedidoResponseDTO> listarPedidos() {
+    return pedidoRepository.findAll().stream()
+            .map(pedido -> {
+                List<ItemPedidoResponseDTO> itens = pedido.getItens().stream()
+                        .map(item -> new ItemPedidoResponseDTO(
+                                item.getId(),
+                                item.getProduto().getNome(),
+                                item.getQuantidade(),
+                                item.getPrecoUnitario()
+                        ))
+                        .collect(Collectors.toList());
+
+                return new PedidoResponseDTO(
+                        pedido.getId(),
+                        pedido.getStatus(),
+                        pedido.getValorTotal(),
+                        pedido.getCanalPedido(),
+                        pedido.getDataCriacao(),
+                        itens
+                );
+            })
+            .collect(Collectors.toList());
+    }
+
 }
