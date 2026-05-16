@@ -25,7 +25,7 @@ public class TokenService {
             //criptografia simétrica com chave secreta
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.create()
-                    .withIssuer("raizes-do-nordest-api") //emissor do token
+                    .withIssuer("raizes-do-nordeste-api") //emissor do token
                     .withSubject(usuario.getEmail())
                     .withExpiresAt(gerarDataExpiracao()) //quando vence o token
                     .sign(algorithm);
@@ -51,6 +51,7 @@ public class TokenService {
                         .getSubject();
 
         } catch (JWTVerificationException exception) {
+            System.out.println(exception.getMessage());
             return "";
         }
     }

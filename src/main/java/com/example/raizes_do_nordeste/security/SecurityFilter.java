@@ -34,7 +34,7 @@ public class SecurityFilter extends OncePerRequestFilter {
         if (token != null) {
             //  Valida o token e extrai o e-mail do usuário
             String email = tokenService.validarToken(token);
-
+    
             if (!email.isEmpty()) {
                 // Busca o usuário no banco de dados
                 Usuario usuario = usuarioRepository.findByEmail(email)
