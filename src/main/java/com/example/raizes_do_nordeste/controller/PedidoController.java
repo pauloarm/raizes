@@ -8,10 +8,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.raizes_do_nordeste.dto.PedidoRequestDTO;
 import com.example.raizes_do_nordeste.dto.PedidoResponseDTO;
+import com.example.raizes_do_nordeste.enums.CanalPedido;
 import com.example.raizes_do_nordeste.mapper.PedidoMapper;
 import com.example.raizes_do_nordeste.model.Pedido;
 import com.example.raizes_do_nordeste.service.PedidoService;
@@ -33,8 +35,8 @@ public class PedidoController {
     }
     
     @GetMapping
-    public ResponseEntity<List<PedidoResponseDTO>>listarPedidos(){
-        List<PedidoResponseDTO> pedidos = pedidoService.listarPedidos(); 
+    public ResponseEntity<List<PedidoResponseDTO>>listarPedidos(@RequestParam(required = false) CanalPedido canalPedido) {
+        List<PedidoResponseDTO> pedidos = pedidoService.listarPedidos(canalPedido); 
         return ResponseEntity.ok(pedidos);
     }
 }

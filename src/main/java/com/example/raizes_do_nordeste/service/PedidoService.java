@@ -24,6 +24,7 @@ import com.example.raizes_do_nordeste.repository.PedidoRepository;
 import com.example.raizes_do_nordeste.repository.ProdutoRepository;
 import com.example.raizes_do_nordeste.repository.UnidadeRepository;
 import com.example.raizes_do_nordeste.repository.UsuarioRepository;
+import com.example.raizes_do_nordeste.enums.CanalPedido;
 import com.example.raizes_do_nordeste.enums.StatusPedido; 
 
 import jakarta.transaction.Transactional;
@@ -103,28 +104,36 @@ public class PedidoService {
         return pedidoRepository.save(pedido);
     }
 
-    public List<PedidoResponseDTO> listarPedidos() {
-    return pedidoRepository.findAll().stream()
-            .map(pedido -> {
-                List<ItemPedidoResponseDTO> itens = pedido.getItens().stream()
-                        .map(item -> new ItemPedidoResponseDTO(
-                                item.getId(),
-                                item.getProduto().getNome(),
-                                item.getQuantidade(),
-                                item.getPrecoUnitario()
-                        ))
-                        .collect(Collectors.toList());
+    public List<PedidoResponseDTO> listarPedidos(CanalPedido canalPedido) {
+        List<Pedido> pedidos;
+        
+        if (canalPedido != null) {
+            pedidos = pedidoRepository.findByCanalPedido(canalPedido);
+        } else {
+            pedidos = pedidoRepository.findAll();
+        }
+    
+        return pedidos.stream()
+                .map(pedido -> {
+                    List<ItemPedidoResponseDTO> itens = pedido.getItens().stream()
+                            .map(item -> new ItemPedidoResponseDTO(
+                                    item.getId(),
+                                    item.getProduto().getNome(),
+                                    item.getQuantidade(),
+                                    item.getPrecoUnitario()
+                            ))
+                            .collect(Collectors.toList());
 
-                return new PedidoResponseDTO(
-                        pedido.getId(),
-                        pedido.getStatus(),
-                        pedido.getValorTotal(),
-                        pedido.getCanalPedido(),
-                        pedido.getDataCriacao(),
-                        itens
-                );
-            })
-            .collect(Collectors.toList());
+                    return new PedidoResponseDTO(
+                            pedido.getId(),
+                            pedido.getStatus(),
+                            pedido.getValorTotal(),
+                            pedido.getCanalPedido(),
+                            pedido.getDataCriacao(),
+                            itens
+                    );
+                })
+                .collect(Collectors.toList());
     }
 
 }

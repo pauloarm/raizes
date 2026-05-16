@@ -1,5 +1,7 @@
 package com.example.raizes_do_nordeste.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.example.raizes_do_nordeste.dto.UnidadeDTO;
@@ -24,6 +26,12 @@ public class UnidadeService {
         unidade.setPossuiCozinhaCompleta(unidadeDTO.possuiCozinhaCompleta());
         Unidade unidadeSalva = unidadeRepository.save(unidade);
         return new UnidadeDTO(unidadeSalva.getId(), unidadeSalva.getNome(), unidadeSalva.getEndereco(), unidadeSalva.getPossuiCozinhaCompleta());
+    }
+
+    public List<UnidadeDTO> listarTodasUnidades() {
+        return unidadeRepository.findAll().stream()
+                .map(unidade -> new UnidadeDTO(unidade.getId(), unidade.getNome(), unidade.getEndereco(), unidade.getPossuiCozinhaCompleta()))
+                .toList();
     }
 
 }
