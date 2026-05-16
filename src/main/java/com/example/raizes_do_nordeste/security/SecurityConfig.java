@@ -35,6 +35,8 @@ public class SecurityConfig {
                     
                     // Permite que qualquer um faça login 
                     req.requestMatchers(HttpMethod.POST, "/auth/login").permitAll();
+
+                    req.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll();
                     
                     req.anyRequest().authenticated();
                 })
