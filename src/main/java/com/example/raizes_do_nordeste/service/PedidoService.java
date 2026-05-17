@@ -48,7 +48,7 @@ public class PedidoService {
     }
 
 
-    @Transactional
+    @Transactional()
     public Pedido criarPedido(PedidoRequestDTO pedidoRequest) {
         
 
@@ -103,14 +103,23 @@ public class PedidoService {
         pedido.setValorTotal(valorTotal);
         return pedidoRepository.save(pedido);
     }
-
-    public List<PedidoResponseDTO> listarPedidos(CanalPedido canalPedido) {
+    
+    public List<PedidoResponseDTO> listarPedidos(CanalPedido canalPedido, Usuario usuario) {
         List<Pedido> pedidos;
-        
-        if (canalPedido != null) {
-            pedidos = pedidoRepository.findByCanalPedido(canalPedido);
+        boolean isAdmin = usuario.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+
+        if(isAdmin){
+            if(canalPedido != null){
+                pedidos = pedidoRepository.findByCanalPedido(canalPedido);
+            } else {
+                pedidos = pedidoRepository.findAll();
+            }
         } else {
-            pedidos = pedidoRepository.findAll();
+            if(canalPedido != null){
+                pedidos = pedidoRepository.findByUsuarioAndCanalPedido(usuario, canalPedido);
+            } else {
+                pedidos = pedidoRepository.findByUsuario(usuario);
+            }
         }
     
         return pedidos.stream()

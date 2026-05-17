@@ -30,14 +30,20 @@ public class SecurityConfig {
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // A API não guarda sessão (estado)
                 .authorizeHttpRequests(req -> {
                     
-                    // Permite que qualquer um crie uma conta)
-                    req.requestMatchers(HttpMethod.POST, "/usuarios").permitAll();
-                    
-                    // Permite que qualquer um faça login 
+                    // Rotas publicas
+                    req.requestMatchers(HttpMethod.POST, "/usuarios").permitAll(); 
                     req.requestMatchers(HttpMethod.POST, "/auth/login").permitAll();
-
                     req.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll();
                     
+                    //Rotas ADMIN
+                    req.requestMatchers(HttpMethod.POST, "/produtos", "/unidades", "/estoque").hasRole("ADMIN");
+                    req.requestMatchers(HttpMethod.PUT, "/produtos/**", "/unidades/**", "/estoque/**").hasRole("ADMIN");
+                    req.requestMatchers(HttpMethod.DELETE, "/produtos/**", "/unidades/**", "/estoque/**").hasRole("ADMIN");
+
+                    //Rotas compartilhadas para usuarios logados
+                    req.requestMatchers(HttpMethod.POST, "/pedidos", "/pagamentos**").authenticated();
+                    req.requestMatchers(HttpMethod.GET, "/produtos/**", "/unidades/**", "/estoque/**", "/pedidos/**").authenticated();
+
                     req.anyRequest().authenticated();
                 })
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
